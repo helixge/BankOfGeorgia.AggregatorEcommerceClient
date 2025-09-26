@@ -8,6 +8,21 @@
 		<UserSecretsId>945403e8-d305-4e24-a7b9-1a138a228127</UserSecretsId>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<RootNamespace>BankOfGeorgia.AggregatorEcommerceClient</RootNamespace>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/helixge/BankOfGeorgia.AggregatorEcommerceClient</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/helixge/BankOfGeorgia.AggregatorEcommerceClient</RepositoryUrl>
+		<PackageId>Helix.BankOfGeorgia.AggregatorEcommerceClient</PackageId>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageTags>bankofgeorgia;bank of georgia;bank;ecommerce;payments;visa;mastercard;master card;amex;american express;americanexpress;e-commerce</PackageTags>
+		<PackageIcon>helix.png</PackageIcon>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<Product>Bank of Georgia Aggregator Integration Protocol .NET Client for E-Commerce Services</Product>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<NeutralLanguage>en</NeutralLanguage>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
@@ -19,6 +34,21 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="BankOfGeorgia.AggregatorEcommerceClient.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\..\helix.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>

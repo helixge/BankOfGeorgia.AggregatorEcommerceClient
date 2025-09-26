@@ -1,0 +1,11 @@
+<Project>
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<FileVersion>0.0.1.0</FileVersion>
+		<AssemblyVersion>0.0.1.0</AssemblyVersion>
+		<Authors>Helix</Authors>
+		<Company>Helix</Company>
+		<Copyright>Helix</Copyright>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+</Project>
