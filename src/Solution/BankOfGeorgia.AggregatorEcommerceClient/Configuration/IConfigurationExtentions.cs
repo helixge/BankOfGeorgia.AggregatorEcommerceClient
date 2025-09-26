@@ -32,7 +32,12 @@ public static class IConfigurationExtentions
             .AddScoped<IBankOfGeorgiaApiTokenClient, BankOfGeorgiaApiTokenClient>();
 
         services
-            .AddHttpClient<IBankOfGeorgiaAggregatorEcommerceClient, BankOfGeorgiaAggregatorEcommerceClient>();
+            .AddHttpClient<IBankOfGeorgiaAggregatorEcommerceClient, BankOfGeorgiaAggregatorEcommerceClient>((serviceProvider, httpClient) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<BankOfGeorgiaAggregatorEcommerceClientOptions>>().Value;
+                var url = options.ApiBaseUrlOrDefault();
+                httpClient.BaseAddress = new Uri(url);
+            });
 
         services
             .AddHttpClient<IBankOfGeorgiaApiTokenClient, BankOfGeorgiaApiTokenClient>((serviceProvider, httpClient) =>

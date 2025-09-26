@@ -11,7 +11,7 @@ public class PurchaseUnits
     public required decimal TotalAmount { get; set; }
 
     [JsonPropertyName("basket")]
-    public required List<BasketItem> Basket { get; set; }
+    public required IEnumerable<BasketItem> Basket { get; set; }
 
     [JsonPropertyName("delivery")]
     public Delivery? Delivery { get; set; }

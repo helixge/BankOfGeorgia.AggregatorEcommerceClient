@@ -1,12 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
-using System.Net.Http.Json;
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
-
-public interface IBankOfGeorgiaApiTokenClient
-{
-    Task<TokenApiResponse> GetToken();
-}
 
 internal class BankOfGeorgiaApiTokenClient(
     IOptions<BankOfGeorgiaAggregatorEcommerceClientOptions> options,
@@ -25,27 +19,18 @@ internal class BankOfGeorgiaApiTokenClient(
         ]);
         request.Content = formContent;
 
-        HttpResponseMessage response = await httpClient.SendAsync(request);
+        TokenApiResponse response = await httpClient.MakeBankOfGeorgiaRequest<TokenApiResponse>(request, serializer);
 
-        response.EnsureSuccessStatusCode();
-        string responseContent = await response.Content.ReadAsStringAsync();
-        TokenApiResponse? responseData = serializer.Deserialize<TokenApiResponse>(responseContent);
-
-        if (responseData is null)
+        if (string.IsNullOrWhiteSpace(response.AccessToken))
         {
-            throw new BankOfGeorgiaApiTokenException("Failed to deserialize token response or response was empty");
+            throw new BankOfGeorgiaApiException("Access token is missing in the response");
         }
 
-        if (string.IsNullOrWhiteSpace(responseData.AccessToken))
+        if (string.Equals(response.TokenType, "bearer", StringComparison.OrdinalIgnoreCase) is false)
         {
-            throw new BankOfGeorgiaApiTokenException("Access token is missing in the response");
+            throw new BankOfGeorgiaApiException($"Unexpected token type: {response.TokenType}");
         }
 
-        if (string.Equals(responseData.TokenType, "bearer", StringComparison.OrdinalIgnoreCase) is false)
-        {
-            throw new BankOfGeorgiaApiTokenException($"Unexpected token type: {responseData.TokenType}");
-        }
-
-        return responseData;
+        return response;
     }
 }

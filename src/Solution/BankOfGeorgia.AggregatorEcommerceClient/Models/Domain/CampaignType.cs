@@ -3,12 +3,11 @@
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum CardType
+public enum CampaignType
 {
-    [JsonPropertyName("visa")]
-    Visa,
-    [JsonPropertyName("mc")]
-    MasterCard,
-    [JsonPropertyName("solo")]
-    Solo
+    [JsonPropertyName("restrict")]
+    Restrict,
+
+    [JsonPropertyName("client_discount")]
+    ClientDiscount
 }

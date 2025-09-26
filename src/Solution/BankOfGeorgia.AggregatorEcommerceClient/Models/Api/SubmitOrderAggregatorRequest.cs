@@ -2,8 +2,15 @@
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-public class SubmitOrderRequest
+public class SubmitOrderAggregatorRequest
 {
+    [JsonPropertyName("application_type")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ApplicationType? ApplicationType { get; set; }
+
+    [JsonPropertyName("buyer")]
+    public Buyer? Buyer { get; set; }
+
     [JsonPropertyName("callback_url")]
     public required string CallbackUrl { get; set; }
 
@@ -16,13 +23,6 @@ public class SubmitOrderRequest
     [JsonPropertyName("redirect_urls")]
     public RedirectUrls? RedirectUrls { get; set; }
 
-    [JsonPropertyName("application_type")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicationType? ApplicationType { get; set; }
-
-    [JsonPropertyName("buyer")]
-    public Buyer? Buyer { get; set; }
-
     [JsonPropertyName("capture")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public CaptureType? Capture { get; set; }
@@ -31,7 +31,8 @@ public class SubmitOrderRequest
     public int? Ttl { get; set; }
 
     [JsonPropertyName("payment_method")]
-    public List<PaymentMethod>? PaymentMethod { get; set; }
+    [JsonConverter(typeof(PaymentMethodCollectionConverter))]
+    public required IEnumerable<PaymentMethod> PaymentMethod { get; set; }
 
     [JsonPropertyName("config")]
     public Config? Config { get; set; }

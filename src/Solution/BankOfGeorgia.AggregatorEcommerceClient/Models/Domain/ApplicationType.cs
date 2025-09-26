@@ -7,6 +7,7 @@ public enum ApplicationType
 {
     [JsonPropertyName("web")]
     Web,
+
     [JsonPropertyName("mobile")]
     Mobile
 }

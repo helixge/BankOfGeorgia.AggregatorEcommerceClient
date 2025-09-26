@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
@@ -24,5 +25,19 @@ public class BankOfGeorgiaAggregatorEcommerceClientOptions
         }
 
         return OAuthUrl;
+    }
+
+    public string ApiBaseUrlOrDefault()
+    {
+        if (string.IsNullOrWhiteSpace(ApiBaseUrl))
+        {
+            return Constants.DefaultBaseUrl;
+        }
+
+        if (ApiBaseUrl.EndsWith("/") is false)
+        {
+            return $"{ApiBaseUrl}/";
+        }
+        return ApiBaseUrl;
     }
 }
