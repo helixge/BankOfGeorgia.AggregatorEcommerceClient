@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a .NET class library project for the Bank of Georgia Aggregator E-commerce Client. It appears to be a payment gateway client library for integrating with Bank of Georgia's e-commerce aggregator API, similar to the iPay client mentioned in the README but for a different Bank of Georgia service.
+.NET client library for Bank of Georgia's Aggregator E-commerce API. Provides OAuth2 authentication and payment order submission functionality for integrating with Bank of Georgia's payment gateway.
 
 ## Build and Development Commands
 
@@ -17,6 +17,18 @@ dotnet build src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
 dotnet build src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln -c Release
 ```
 
+### Test
+```bash
+# Run all tests
+dotnet test src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
+
+# Run tests with detailed output
+dotnet test src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln --logger "console;verbosity=detailed"
+
+# Run specific test
+dotnet test src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln --filter "FullyQualifiedName~IntegrationTests"
+```
+
 ### Clean
 ```bash
 dotnet clean src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
@@ -27,33 +39,66 @@ dotnet clean src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
 dotnet restore src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
 ```
 
-## Project Structure
+## Architecture
 
-The solution follows a standard .NET library structure:
-- **src/Solution/** - Contains the Visual Studio solution and project
-- **src/Solution/BankOfGeorgia.AggregatorEcommerceClient/** - Main library project
-  - **Configuration/** - Contains options classes and DI extension methods
-  - **BankOfGeorgiaAggregatorEcommerceClient.cs** - Main client interface and implementation
+### Authentication Flow
+1. **IBankOfGeorgiaApiTokenClient** - Handles OAuth2 client credentials flow
+   - Obtains access tokens from Bank of Georgia's OAuth endpoint
+   - Uses Basic authentication with ClientId:ClientSecret
+   - Default OAuth URL: `https://oauth2.bog.ge/auth/realms/bog/protocol/openid-connect/token`
 
-## Key Components
+2. **IBankOfGeorgiaAggregatorEcommerceClient** - Main client for API operations
+   - Uses token from token client for authorization
+   - Submits payment orders to the aggregator API
+   - Default API base URL: `https://api.bog.ge/payments`
 
-### Client Interface
-- `IBankOfGeorgiaAggregatorEcommerceClient` - Main interface for the client
-- `BankOfGeorgiaAggregatorEcommerceClient` - Internal implementation class
+### Dependency Injection Setup
+```csharp
+services.AddBankOfGeorgiaAggregatorEcommerce(configuration);
+// or with custom section
+services.AddBankOfGeorgiaAggregatorEcommerce(configuration, "CustomSectionName");
+```
 
-### Configuration
-- `BankOfGeorgiaAggregatorEcommerceClientOptions` - Options class with ClientId and ClientSecret properties
-- `IConfigurationExtentions` - Extension methods for ASP.NET Core DI integration via `AddBankOfGeorgiaAggregatorEcommergeClient`
+Configuration expects:
+```json
+{
+  "BankOfGeorgiaAggregatorEcommerce": {
+    "ClientId": "required",
+    "ClientSecret": "required",
+    "OAuthUrl": "optional - uses default if not provided",
+    "ApiBaseUrl": "optional - uses default if not provided"
+  }
+}
+```
 
-## Target Frameworks
-The library targets:
-- .NET 7.0
+### Key Components
+
+- **Authentication/** - OAuth token management
+  - `BankOfGeorgiaApiTokenClient` - OAuth2 client credentials implementation
+  - `TokenApiResponse` - Token response model
+  - `BankOfGeorgiaApiTokenException` - Authentication-specific exceptions
+
+- **Models/** - Request/response DTOs
+  - `SubmitOrderRequest` - Main order submission payload
+  - Supporting models: `PurchaseUnits`, `BasketItem`, `RedirectUrls`, `Buyer`, etc.
+  - Enums: `ApplicationType`, `CaptureType`, `PaymentMethod`, `CardType`, `CampaignType`
+
+- **Serialization/** - `BankOfGeorgiaApiSerializationService` for JSON handling
+
+- **Configuration/** - DI setup and options validation
+
+### Testing
+
+- **Unit Tests**: Located in `BankOfGeorgia.AggregatorEcommerceClient.Tests`
+- **Integration Tests**: Use `IntegrationTestBase` base class with full DI container
+- Test framework: xUnit with NSubstitute for mocking
+- Configuration: Uses User Secrets (ID: `945403e8-d305-4e24-a7b9-1a138a228127`)
+
+## Target Framework
 - .NET 8.0
 
-## Important Notes
-- This is a class library project, not an executable application
-- The library is designed to be consumed by ASP.NET Core applications through dependency injection
-- The implementation is currently skeletal - the client interface and implementation are empty stubs
-- Always use discriptive names for variables and methods
-- Do not add comments, generate code which is easily read and understood. Use comments only for special cases where a context or a decision cannot be inferred just be reading the code when there is an external factor to it.
-- Inverse conditinal statements and exist early where possible
+## Code Guidelines
+- Use descriptive names for variables and methods
+- Avoid comments unless external context is necessary
+- Use early returns and guard clauses
+- Follow existing patterns in the codebase
