@@ -10,7 +10,8 @@ public interface IBankOfGeorgiaApiTokenClient
 
 internal class BankOfGeorgiaApiTokenClient(
     IOptions<BankOfGeorgiaAggregatorEcommerceClientOptions> options,
-    HttpClient httpClient
+    HttpClient httpClient,
+    IBankOfGeorgiaApiSerializationService serializer
     ) : IBankOfGeorgiaApiTokenClient
 {
     public async Task<TokenApiResponse> GetToken()
@@ -27,7 +28,8 @@ internal class BankOfGeorgiaApiTokenClient(
         HttpResponseMessage response = await httpClient.SendAsync(request);
 
         response.EnsureSuccessStatusCode();
-        TokenApiResponse? responseData = await response.Content.ReadFromJsonAsync<TokenApiResponse>();
+        string responseContent = await response.Content.ReadAsStringAsync();
+        TokenApiResponse? responseData = serializer.Deserialize<TokenApiResponse>(responseContent);
 
         if (responseData is null)
         {

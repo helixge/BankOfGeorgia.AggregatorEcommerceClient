@@ -3,13 +3,6 @@ using System.Text.Json.Serialization;
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-public interface IBankOfGeorgiaApiSerializationService
-{
-    TData? Deserialize<TData>(string data);
-
-    string Serialize<TData>(TData data);
-}
-
 internal class BankOfGeorgiaApiSerializationService : IBankOfGeorgiaApiSerializationService
 {
     private readonly JsonSerializerOptions _serializerOptions;

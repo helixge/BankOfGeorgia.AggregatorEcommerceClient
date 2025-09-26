@@ -99,6 +99,6 @@ Configuration expects:
 
 ## Code Guidelines
 - Use descriptive names for variables and methods
-- Avoid comments unless external context is necessary
+- **NEVER add comments to code** - no inline comments, no block comments, no XML documentation comments
 - Use early returns and guard clauses
 - Follow existing patterns in the codebase

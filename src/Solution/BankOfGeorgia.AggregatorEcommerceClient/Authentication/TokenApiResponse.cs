@@ -7,9 +7,9 @@ public class TokenApiResponse
     [JsonPropertyName("access_token")]
     public string? AccessToken { get; init; }
 
-    [JsonPropertyName("access_token")]
+    [JsonPropertyName("token_type")]
     public string? TokenType { get; init; }
 
-    [JsonPropertyName("access_token")]
+    [JsonPropertyName("expires_in")]
     public int ExpiresIn { get; init; }
 }

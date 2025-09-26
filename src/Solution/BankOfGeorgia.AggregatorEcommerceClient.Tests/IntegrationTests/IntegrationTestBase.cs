@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Hosting;
-    
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+
 namespace BankOfGeorgia.AggregatorEcommerceClient.Tests;
 
 public class IntegrationTestBase : IDisposable
@@ -19,6 +20,8 @@ public class IntegrationTestBase : IDisposable
     private IHost BuildHost()
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+
+        builder.Configuration.AddUserSecrets<IntegrationTestBase>();
 
         builder.Services.AddBankOfGeorgiaAggregatorEcommerce(
             builder.Configuration

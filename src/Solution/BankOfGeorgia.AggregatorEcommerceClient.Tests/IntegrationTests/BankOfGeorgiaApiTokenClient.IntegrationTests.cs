@@ -15,6 +15,10 @@ public class BankOfGeorgiaApiTokenClientTests : IntegrationTestBase
         TokenApiResponse token = await client.GetToken();
 
         // Assert
-
+        Assert.Multiple(
+            () => Assert.StartsWith("eyJ", token.AccessToken),
+            () => Assert.True(token.ExpiresIn > 0),
+            () => Assert.Equal("Bearer", token.TokenType)
+        );
     }
 }
