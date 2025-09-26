@@ -1,0 +1,58 @@
+name: Pull Request Build and Test
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+    paths:
+      - 'src/**'
+      - '*.sln'
+      - '*.csproj'
+      - '.github/workflows/pull-request.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      BankOfGeorgiaAggregatorEcommerce__ClientId: ${{ secrets.DEVOPS_TEST_CLIENTID }}
+      BankOfGeorgiaAggregatorEcommerce__ClientSecret: ${{ secrets.DEVOPS_TEST_CLIENTSECRET }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln
+
+    - name: Build
+      run: dotnet build src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test src/Solution/BankOfGeorgiaAggregatorEcommerceClientSolution.sln --no-build --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx" --collect:"XPlat Code Coverage"
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          **/TestResults/*.trx
+          **/TestResults/**/coverage.cobertura.xml
+        retention-days: 7
+
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: .NET Tests
+        path: '**/TestResults/*.trx'
+        reporter: dotnet-trx
+        fail-on-error: true
