@@ -17,6 +17,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      BankOfGeorgiaAggregatorEcommerce__ClientId: ${{ secrets.DEVOPS_TEST_CLIENTID }}
+      BankOfGeorgiaAggregatorEcommerce__ClientSecret: ${{ secrets.DEVOPS_TEST_CLIENTSECRET }}
+
     steps:
     - uses: actions/checkout@v4
 
