@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -24,6 +23,9 @@ public static class IConfigurationExtentions
             .Bind(configuration.GetSection(sectionKey))
             .ValidateDataAnnotations()
             .ValidateOnStart();
+
+        services
+            .AddSingleton<IBankOfGeorgiaApiSerializationService, BankOfGeorgiaApiSerializationService>();
 
         services
             .AddScoped<IBankOfGeorgiaAggregatorEcommerceClient, BankOfGeorgiaAggregatorEcommerceClient>()

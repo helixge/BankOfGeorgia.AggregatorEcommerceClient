@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOfGeorgia.AggregatorEcommerceClient", "BankOfGeorgia.AggregatorEcommerceClient\BankOfGeorgia.AggregatorEcommerceClient.csproj", "{4DA774FE-09D1-4DFA-90FC-4285AE78E337}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOfGeorgia.AggregatorEcommerceClient.Tests", "BankOfGeorgia.AggregatorEcommerceClient.Tests\BankOfGeorgia.AggregatorEcommerceClient.Tests.csproj", "{AB32517E-62F7-450E-9C6E-C7F1F2919D1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB32517E-62F7-450E-9C6E-C7F1F2919D1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB32517E-62F7-450E-9C6E-C7F1F2919D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB32517E-62F7-450E-9C6E-C7F1F2919D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB32517E-62F7-450E-9C6E-C7F1F2919D1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
