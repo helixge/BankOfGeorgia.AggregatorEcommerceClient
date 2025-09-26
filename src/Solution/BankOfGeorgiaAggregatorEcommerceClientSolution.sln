@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankOfGeorgia.AggregatorEcommerceClient", "BankOfGeorgia.AggregatorEcommerceClient\BankOfGeorgia.AggregatorEcommerceClient.csproj", "{4DA774FE-09D1-4DFA-90FC-4285AE78E337}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DA774FE-09D1-4DFA-90FC-4285AE78E337}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59834EE1-ADF6-4355-BA1B-15FA52825AC5}
+	EndGlobalSection
+EndGlobal
