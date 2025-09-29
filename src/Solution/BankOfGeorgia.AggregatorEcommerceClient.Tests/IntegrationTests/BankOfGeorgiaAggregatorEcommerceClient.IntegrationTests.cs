@@ -127,6 +127,34 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
         Assert.True(response.Success);
     }
 
+    [Fact]
+    public async Task RefundOrder_ValidRequest_Succeeds()
+    {
+        // Arrange
+        using IServiceScope scope = App.Services.CreateScope();
+        var client = scope.ServiceProvider.GetRequiredService<IBankOfGeorgiaAggregatorEcommerceClient>();
+
+        SubmitOrderRequest orderRequest = CreateValidSubmitOrderRequest();
+        SubmitOrderResponse orderResponse = await client.SubmitOrder(orderRequest);
+
+        RefundOrderRequest request = new()
+        {
+            OrderId = orderResponse.Id!,
+            Amount = 2.50m,
+            IdempotencyKey = Guid.NewGuid()
+        };
+
+        // Act
+        RefundOrderResponse response = await client.RefundOrder(request);
+
+        // Assert
+        Assert.Multiple(
+            () => Assert.NotNull(response.Key),
+            () => Assert.NotNull(response.Message),
+            () => Assert.NotNull(response.ActionId)
+        );
+    }
+
     private SubmitOrderRequest CreateValidSubmitOrderRequest()
     {
         SubmitOrderRequest request = new()

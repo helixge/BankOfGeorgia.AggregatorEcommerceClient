@@ -10,6 +10,7 @@ public interface IBankOfGeorgiaAggregatorEcommerceClient
     Task<SaveCardForRecurringPaymentsResponse> SaveCardForRecurringPayments(SaveCardForRecurringPaymentsRequest request);
     Task<SaveCardForAutomaticPaymentsResponse> SaveCardForAutomaticPayments(SaveCardForAutomaticPaymentsRequest request);
     Task<DeleteSavedCardResponse> DeleteSavedCard(DeleteSavedCardRequest request);
+    Task<RefundOrderResponse> RefundOrder(RefundOrderRequest request);
 }
 
 internal class BankOfGeorgiaAggregatorEcommerceClient(
@@ -110,6 +111,27 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
 
         await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(DeleteSavedCard));
         return new DeleteSavedCardResponse { Success = true };
+    }
+
+    public async Task<RefundOrderResponse> RefundOrder(RefundOrderRequest request)
+    {
+        string url = $"v1/payment/refund/{request.OrderId}";
+        HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Post, url);
+
+        if (request.IdempotencyKey is not null)
+        {
+            requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
+        }
+
+        RefundOrderAggregatorRequest aggregatorRequest = request.ToRefundOrderAggregatorRequest();
+        string serializedContent = serializer.Serialize(aggregatorRequest);
+        StringContent requestContent = new(serializedContent, Encoding.UTF8, "application/json");
+        requestMessage.Content = requestContent;
+
+        var aggregatorResponse = await httpClient.MakeBankOfGeorgiaRequest<RefundOrderAggregatorResponse>(requestMessage, serializer);
+        RefundOrderResponse response = aggregatorResponse.ToRefundOrderResponse();
+
+        return response;
     }
 
     private async Task<HttpRequestMessage> CreateAuthenticatedRequestMessage(HttpMethod method, string url)

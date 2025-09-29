@@ -102,3 +102,4 @@ Configuration expects:
 - **NEVER add comments to code** - no inline comments, no block comments, no XML documentation comments
 - Use early returns and guard clauses
 - Follow existing patterns in the codebase
+- Always and a trailing line break when creating a file and make sure there is one when editing it.
