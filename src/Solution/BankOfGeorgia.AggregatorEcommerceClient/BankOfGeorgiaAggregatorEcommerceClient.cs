@@ -9,6 +9,7 @@ public interface IBankOfGeorgiaAggregatorEcommerceClient
     Task<GetOrderDetailsResponse> GetOrderDetails(GetOrderDetailsRequest request);
     Task<SaveCardForRecurringPaymentsResponse> SaveCardForRecurringPayments(SaveCardForRecurringPaymentsRequest request);
     Task<SaveCardForAutomaticPaymentsResponse> SaveCardForAutomaticPayments(SaveCardForAutomaticPaymentsRequest request);
+    Task<DeleteSavedCardResponse> DeleteSavedCard(DeleteSavedCardRequest request);
 }
 
 internal class BankOfGeorgiaAggregatorEcommerceClient(
@@ -109,6 +110,27 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
 
         string responseContent = await httpResponse.Content.ReadAsStringAsync();
         throw new BankOfGeorgiaApiException($"{nameof(SaveCardForAutomaticPayments)} failed with status {httpResponse.StatusCode}", responseContent);
+    }
+
+    public async Task<DeleteSavedCardResponse> DeleteSavedCard(DeleteSavedCardRequest request)
+    {
+        string url = $"v1/charges/card/{request.OrderId}";
+        HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Delete, url);
+
+        if (request.IdempotencyKey is not null)
+        {
+            requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
+        }
+
+        HttpResponseMessage httpResponse = await httpClient.SendAsync(requestMessage);
+
+        if (httpResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
+        {
+            return new DeleteSavedCardResponse { Success = true };
+        }
+
+        string responseContent = await httpResponse.Content.ReadAsStringAsync();
+        throw new BankOfGeorgiaApiException($"{nameof(DeleteSavedCard)} failed with status {httpResponse.StatusCode}", responseContent);
     }
 
     private async Task<HttpRequestMessage> CreateAuthenticatedRequestMessage(HttpMethod method, string url)

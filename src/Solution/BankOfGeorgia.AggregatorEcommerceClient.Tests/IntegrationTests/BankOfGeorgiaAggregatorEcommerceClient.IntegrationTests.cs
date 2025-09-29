@@ -104,6 +104,29 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
         Assert.True(response.Success);
     }
 
+    [Fact]
+    public async Task DeleteSavedCard_ValidRequest_Succeeds()
+    {
+        // Arrange
+        using IServiceScope scope = App.Services.CreateScope();
+        var client = scope.ServiceProvider.GetRequiredService<IBankOfGeorgiaAggregatorEcommerceClient>();
+
+        SubmitOrderRequest orderRequest = CreateValidSubmitOrderRequest();
+        SubmitOrderResponse orderResponse = await client.SubmitOrder(orderRequest);
+
+        DeleteSavedCardRequest request = new()
+        {
+            OrderId = orderResponse.Id!,
+            IdempotencyKey = Guid.NewGuid()
+        };
+
+        // Act
+        DeleteSavedCardResponse response = await client.DeleteSavedCard(request);
+
+        // Assert
+        Assert.True(response.Success);
+    }
+
     private SubmitOrderRequest CreateValidSubmitOrderRequest()
     {
         SubmitOrderRequest request = new()
