@@ -2,9 +2,11 @@
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ApplicationType
 {
+    [JsonPropertyName("")]
+    Unknown = 0,
+
     [JsonPropertyName("web")]
     Web,
 

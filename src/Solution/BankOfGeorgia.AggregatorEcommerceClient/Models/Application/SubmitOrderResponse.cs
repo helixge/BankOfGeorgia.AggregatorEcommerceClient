@@ -2,9 +2,9 @@
 
 public class SubmitOrderResponse
 {
-    public string? Id { get; set; }
+    public string? Id { get; init; }
 
-    public string? DetailLink { get; set; }
+    public string? DetailLink { get; init; }
 
-    public string? RedirectLink { get; set; }
+    public string? RedirectLink { get; init; }
 }

@@ -13,7 +13,8 @@ internal class BankOfGeorgiaApiSerializationService : IBankOfGeorgiaApiSerializa
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             PropertyNameCaseInsensitive = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = { new EnumConverterFactory() }
         };
     }
 
@@ -22,8 +23,15 @@ internal class BankOfGeorgiaApiSerializationService : IBankOfGeorgiaApiSerializa
         return JsonSerializer.Serialize(data, _serializerOptions);
     }
 
-    public TData? Deserialize<TData>(string data)
+    public TData? Deserialize<TData>(string serialized)
     {
-        return JsonSerializer.Deserialize<TData>(data, _serializerOptions);
+        try
+        {
+            return JsonSerializer.Deserialize<TData>(serialized, _serializerOptions);
+        }
+        catch (Exception ex)
+        {
+            throw new BankOfGeorgiaApiException($"Failed to deserialize the following text to type '{typeof(TData).Name}': {serialized}", ex);
+        }
     }
 }

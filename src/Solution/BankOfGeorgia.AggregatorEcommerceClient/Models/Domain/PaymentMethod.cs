@@ -4,6 +4,9 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 
 public enum PaymentMethod
 {
+    [JsonPropertyName("")]
+    Unknown = 0,
+
     /// <summary>
     /// Payment by a bank card
     /// </summary>

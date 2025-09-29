@@ -6,6 +6,7 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 public interface IBankOfGeorgiaAggregatorEcommerceClient
 {
     Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request);
+    Task<GetOrderDetailsResponse> GetOrderDetails(GetOrderDetailsRequest request);
 }
 
 internal class BankOfGeorgiaAggregatorEcommerceClient(
@@ -16,11 +17,8 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
 {
     public async Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request)
     {
-        TokenApiResponse token = await bankOfGeorgiaApiTokenClient.GetToken();
-        HttpRequestMessage requestMessage = new(HttpMethod.Post, "v1/ecommerce/orders");
-        AuthenticationHeaderValue authHeader = new("Bearer", token.AccessToken);
-
-        requestMessage.Headers.Authorization = authHeader;
+        string url = "v1/ecommerce/orders";
+        HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Post, url);
 
         if (request.IdempotencyKey is not null)
         {
@@ -42,16 +40,39 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
         StringContent requestContent = new(serializedContent, Encoding.UTF8, "application/json");
         requestMessage.Content = requestContent;
 
-        SubmitOrderAggregatorResponse aggregatorResponse = await httpClient.MakeBankOfGeorgiaRequest<SubmitOrderAggregatorResponse>(requestMessage, serializer);
+        var aggregatorResponse = await httpClient.MakeBankOfGeorgiaRequest<SubmitOrderAggregatorResponse>(requestMessage, serializer);
         SubmitOrderResponse response = aggregatorResponse.ToSubmitOrderResponse();
 
         if (string.IsNullOrWhiteSpace(response.Id))
         {
-            throw new BankOfGeorgiaApiException($"{nameof(SubmitOrder)} resulted in an empty {nameof(response.Id)}");
+            throw new BankOfGeorgiaApiException($"{nameof(SubmitOrder)} resulted in an empty {nameof(response.Id)}", aggregatorResponse);
         }
 
         return response;
     }
 
+    public async Task<GetOrderDetailsResponse> GetOrderDetails(GetOrderDetailsRequest request)
+    {
+        string url = $"v1/receipt/{request.OrderId}";
+        HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Get, url);
 
+        var aggregatorResponse = await httpClient.MakeBankOfGeorgiaRequest<GetOrderDetailsAggregatorResponse>(requestMessage, serializer);
+        GetOrderDetailsResponse response = aggregatorResponse.ToGetOrderDetailsResponse();
+
+        if (string.IsNullOrWhiteSpace(response.OrderId))
+        {
+            throw new BankOfGeorgiaApiException($"{nameof(GetOrderDetails)} resulted in an empty {nameof(response.OrderId)}", aggregatorResponse);
+        }
+
+        return response;
+    }
+
+    private async Task<HttpRequestMessage> CreateAuthenticatedRequestMessage(HttpMethod method, string url)
+    {
+        TokenApiResponse token = await bankOfGeorgiaApiTokenClient.GetToken();
+        HttpRequestMessage requestMessage = new(method, url);
+        AuthenticationHeaderValue authHeader = new("Bearer", token.AccessToken);
+        requestMessage.Headers.Authorization = authHeader;
+        return requestMessage;
+    }
 }

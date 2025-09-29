@@ -2,14 +2,14 @@
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-public enum CaptureType
+public enum SavedCardType
 {
     [JsonPropertyName("")]
     Unknown = 0,
 
-    [JsonPropertyName("automatic")]
-    Automatic,
+    [JsonPropertyName("recurrent")]
+    Recurrent,
 
-    [JsonPropertyName("manual")]
-    Manual
+    [JsonPropertyName("subscription")]
+    Subscription
 }
