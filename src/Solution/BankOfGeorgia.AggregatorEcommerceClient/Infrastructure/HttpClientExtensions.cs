@@ -30,4 +30,17 @@ public static class HttpClientExtensions
 
         return responseData;
     }
+
+    public static async Task MakeBankOfGeorgiaRequestExpectingAccepted(this HttpClient httpClient, HttpRequestMessage request, string operationName)
+    {
+        HttpResponseMessage response = await httpClient.SendAsync(request);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.Accepted)
+        {
+            return;
+        }
+
+        string responseContent = await response.Content.ReadAsStringAsync();
+        throw new BankOfGeorgiaApiException($"{operationName} failed with status {response.StatusCode}", responseContent);
+    }
 }

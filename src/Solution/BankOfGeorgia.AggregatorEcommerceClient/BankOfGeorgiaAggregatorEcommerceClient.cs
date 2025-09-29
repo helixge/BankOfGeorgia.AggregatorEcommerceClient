@@ -80,15 +80,8 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
             requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
         }
 
-        HttpResponseMessage httpResponse = await httpClient.SendAsync(requestMessage);
-
-        if (httpResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
-        {
-            return new SaveCardForRecurringPaymentsResponse { Success = true };
-        }
-
-        string responseContent = await httpResponse.Content.ReadAsStringAsync();
-        throw new BankOfGeorgiaApiException($"{nameof(SaveCardForRecurringPayments)} failed with status {httpResponse.StatusCode}", responseContent);
+        await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(SaveCardForRecurringPayments));
+        return new SaveCardForRecurringPaymentsResponse { Success = true };
     }
 
     public async Task<SaveCardForAutomaticPaymentsResponse> SaveCardForAutomaticPayments(SaveCardForAutomaticPaymentsRequest request)
@@ -101,15 +94,8 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
             requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
         }
 
-        HttpResponseMessage httpResponse = await httpClient.SendAsync(requestMessage);
-
-        if (httpResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
-        {
-            return new SaveCardForAutomaticPaymentsResponse { Success = true };
-        }
-
-        string responseContent = await httpResponse.Content.ReadAsStringAsync();
-        throw new BankOfGeorgiaApiException($"{nameof(SaveCardForAutomaticPayments)} failed with status {httpResponse.StatusCode}", responseContent);
+        await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(SaveCardForAutomaticPayments));
+        return new SaveCardForAutomaticPaymentsResponse { Success = true };
     }
 
     public async Task<DeleteSavedCardResponse> DeleteSavedCard(DeleteSavedCardRequest request)
@@ -122,15 +108,8 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
             requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
         }
 
-        HttpResponseMessage httpResponse = await httpClient.SendAsync(requestMessage);
-
-        if (httpResponse.StatusCode == System.Net.HttpStatusCode.Accepted)
-        {
-            return new DeleteSavedCardResponse { Success = true };
-        }
-
-        string responseContent = await httpResponse.Content.ReadAsStringAsync();
-        throw new BankOfGeorgiaApiException($"{nameof(DeleteSavedCard)} failed with status {httpResponse.StatusCode}", responseContent);
+        await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(DeleteSavedCard));
+        return new DeleteSavedCardResponse { Success = true };
     }
 
     private async Task<HttpRequestMessage> CreateAuthenticatedRequestMessage(HttpMethod method, string url)
