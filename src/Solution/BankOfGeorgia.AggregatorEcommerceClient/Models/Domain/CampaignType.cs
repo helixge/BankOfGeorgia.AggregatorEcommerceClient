@@ -2,9 +2,11 @@
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum CampaignType
 {
+    [JsonPropertyName("")]
+    Unknown = 0,
+
     [JsonPropertyName("restrict")]
     Restrict,
 

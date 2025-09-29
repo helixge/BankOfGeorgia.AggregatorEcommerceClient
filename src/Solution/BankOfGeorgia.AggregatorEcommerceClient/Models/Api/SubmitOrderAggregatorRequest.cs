@@ -5,7 +5,6 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 public class SubmitOrderAggregatorRequest
 {
     [JsonPropertyName("application_type")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ApplicationType? ApplicationType { get; set; }
 
     [JsonPropertyName("buyer")]
@@ -24,7 +23,6 @@ public class SubmitOrderAggregatorRequest
     public RedirectUrls? RedirectUrls { get; set; }
 
     [JsonPropertyName("capture")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public CaptureType? Capture { get; set; }
 
     [JsonPropertyName("ttl")]
