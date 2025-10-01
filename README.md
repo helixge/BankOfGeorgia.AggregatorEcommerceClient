@@ -1,6 +1,8 @@
 # Bank of Georgia Aggregator Integration Protocol .NET Client for E-Commerce Services
 
-[![NuGet Version](https://img.shields.io/nuget/v/BankOfGeorgia.AggregatorEcommerceClient)](https://www.nuget.org/packages/BankOfGeorgia.AggregatorEcommerceClient)
+[![NuGet Version](https://img.shields.io/nuget/v/Helix.BankOfGeorgia.AggregatorEcommerceClient)](https://www.nuget.org/packages/Helix.BankOfGeorgia.AggregatorEcommerceClient)
+
+[Helix.BankOfGeorgia.AggregatorEcommerceClient](https://www.nuget.org/packages/Helix.BankOfGeorgia.AggregatorEcommerceClient) is a .NET client library for using the Bank of Georgia e-commerce payments gateway.
 
 ## How To Use
 See [ASP.NET Core integration guide](#integrating-with-aspnet-core) below
@@ -21,14 +23,14 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   Your client ID provided by Bank of Georgia
 
 * **ClientSecret** (string) - **Required**
-  Your client secret provided by Bank of Georgia
+  Your client secret provided by the Bank of Georgia
 
 ## Payment and Transaction Related Methods
 
 ### Core Payment Operations
 
 * **SubmitOrder**
-  Submit a new payment order to Bank of Georgia for processing. Returns order details including a redirect URL where the customer should be directed to complete the payment.
+  Submit a new payment order to Bank of Georgia for processing. Returns order details, including a redirect URL where the customer should be directed to complete the payment.
   ```csharp
   var response = await client.SubmitOrder(new SubmitOrderRequest
   {
@@ -74,7 +76,7 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   ```
 
 * **SaveCardForAutomaticPayments**
-  Mark an order to save the customer's card for automatic/subscription payments. This must be enabled by Bank of Georgia for your merchant account.
+  Mark an order to save the customer's card for automatic/subscription payments. This must be enabled by the Bank of Georgia for your merchant account.
   ```csharp
   var result = await client.SaveCardForAutomaticPayments(new SaveCardForAutomaticPaymentsRequest
   {
