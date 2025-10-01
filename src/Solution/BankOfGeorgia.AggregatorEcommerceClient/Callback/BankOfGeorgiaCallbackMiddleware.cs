@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
+using System.Text;
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
@@ -88,31 +90,45 @@ public class BankOfGeorgiaCallbackMiddleware(
         return callbackPath;
     }
 
-    private string ReadSignature(HttpContext context)
+    private byte[] ReadSignature(HttpContext context)
     {
-        if (context.Request.Headers.TryGetValue("Callback-Signature", out var signatureValues))
+        if (!context.Request.Headers.TryGetValue("Callback-Signature", out StringValues signatureValues))
         {
-            return signatureValues.FirstOrDefault() ?? string.Empty;
+            throw new CallbackValidationException("Callback-Signature header is missing or empty");
         }
 
-        throw new CallbackValidationException("Callback-Signature header is missing or empty");
+        string? signatureString = signatureValues.FirstOrDefault();
+        if (string.IsNullOrEmpty(signatureString))
+        {
+            throw new CallbackValidationException("Callback-Signature header is empty");
+        }
+
+        try
+        {
+            return Convert.FromBase64String(signatureString);
+        }
+        catch (FormatException ex)
+        {
+            throw new CallbackValidationException("Callback-Signature header is not valid Base64", string.Empty, signatureString, ex);
+        }
     }
 
-    private async Task<string> ReadBody(HttpContext context)
+    private async Task<byte[]> ReadBody(HttpContext context)
     {
         context.Request.EnableBuffering();
-        using StreamReader reader = new(context.Request.Body);
-        string bodyMessage = await reader.ReadToEndAsync();
+        using MemoryStream ms = new();
+        await context.Request.Body.CopyToAsync(ms);
+        byte[] bodyBytes = ms.ToArray();
 
-        if (string.IsNullOrEmpty(bodyMessage))
+        if (bodyBytes.Length == 0)
         {
             throw new CallbackValidationException("Request body is empty");
         }
 
-        return bodyMessage;
+        return bodyBytes;
     }
 
-    private CallbackRequest DeserializeBody(string body)
+    private CallbackRequest DeserializeBody(Span<byte> body)
     {
         CallbackRequest? request;
         try
@@ -121,12 +137,14 @@ public class BankOfGeorgiaCallbackMiddleware(
         }
         catch (Exception ex)
         {
-            throw new CallbackValidationException("Failed to deserialize callback request", body, ex);
+            string bodyString = Encoding.UTF8.GetString(body);
+            throw new CallbackValidationException("Failed to deserialize callback request", bodyString, ex);
         }
 
         if (request is null)
         {
-            throw new CallbackValidationException("Callback request deserialized into null", body);
+            string bodyString = Encoding.UTF8.GetString(body);
+            throw new CallbackValidationException("Callback request deserialized into null", bodyString);
         }
 
         return request;
@@ -134,8 +152,8 @@ public class BankOfGeorgiaCallbackMiddleware(
 
     private async Task HandleCallbackAsync(HttpContext context)
     {
-        string signature = ReadSignature(context);
-        string body = await ReadBody(context);
+        byte[] signature = ReadSignature(context);
+        byte[] body = await ReadBody(context);
 
         verifier.ValidateSignature(body, signature);
 

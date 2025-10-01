@@ -29,4 +29,11 @@ public class CallbackValidationException : Exception
     {
         RequestBody = requestBody;
     }
+
+    public CallbackValidationException(string message, string requestBody, string signature, Exception innerException)
+       : base(message, innerException)
+    {
+        RequestBody = requestBody;
+        Signature = signature;
+    }
 }

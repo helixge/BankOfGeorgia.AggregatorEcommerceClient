@@ -2,7 +2,9 @@
 
 public interface IBankOfGeorgiaApiSerializationService
 {
+    string Serialize<TData>(TData obj);
+    
     TData? Deserialize<TData>(string serialized);
 
-    string Serialize<TData>(TData obj);
+    TData? Deserialize<TData>(Span<byte> serialized);
 }

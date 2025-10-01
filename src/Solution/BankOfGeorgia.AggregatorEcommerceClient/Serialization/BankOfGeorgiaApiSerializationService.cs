@@ -34,4 +34,17 @@ internal class BankOfGeorgiaApiSerializationService : IBankOfGeorgiaApiSerializa
             throw new BankOfGeorgiaApiException($"Failed to deserialize the following text to type '{typeof(TData).Name}': {serialized}", ex);
         }
     }
+
+    public TData? Deserialize<TData>(Span<byte> serialized)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<TData>(serialized, _serializerOptions);
+        }
+        catch (Exception ex)
+        {
+            string serializedString = System.Text.Encoding.UTF8.GetString(serialized);
+            throw new BankOfGeorgiaApiException($"Failed to deserialize the following text to type '{typeof(TData).Name}': {serializedString}", ex);
+        }
+    }
 }
