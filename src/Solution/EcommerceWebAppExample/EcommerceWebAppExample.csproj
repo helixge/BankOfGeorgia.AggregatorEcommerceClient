@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<UserSecretsId>945403e8-d305-4e24-a7b9-1a138a228127</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\BankOfGeorgia.AggregatorEcommerceClient\BankOfGeorgia.AggregatorEcommerceClient.csproj" />
+	</ItemGroup>
+
+</Project>

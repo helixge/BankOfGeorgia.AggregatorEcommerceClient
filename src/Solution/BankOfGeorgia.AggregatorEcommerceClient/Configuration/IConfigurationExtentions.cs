@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text;
@@ -8,24 +9,50 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 
 public static class IConfigurationExtentions
 {
-    public static IServiceCollection AddBankOfGeorgiaAggregatorEcommerce(
+    internal const string DefaultConfigurationSectionKey = "BankOfGeorgiaAggregatorEcommerce";
+
+    public static void AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
+        this IHostApplicationBuilder host)
+        where TCallbackHandler : class, IBankOfGeorgiaAggregatorCallbackHandler
+        => AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
+            host,
+            DefaultConfigurationSectionKey);
+
+    public static void AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
+        this IHostApplicationBuilder host,
+        string configurationSectionKey)
+        where TCallbackHandler : class, IBankOfGeorgiaAggregatorCallbackHandler
+        => host.Services.AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
+            host.Configuration,
+            configurationSectionKey);
+
+    public static IServiceCollection AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
         this IServiceCollection services,
         IConfiguration configuration)
-        => AddBankOfGeorgiaAggregatorEcommerce(services, configuration, "BankOfGeorgiaAggregatorEcommerce");
+        where TCallbackHandler : class, IBankOfGeorgiaAggregatorCallbackHandler
+        => AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
+            services,
+            configuration,
+            DefaultConfigurationSectionKey);
 
-    public static IServiceCollection AddBankOfGeorgiaAggregatorEcommerce(
+    public static IServiceCollection AddBankOfGeorgiaAggregatorEcommerce<TCallbackHandler>(
         this IServiceCollection services,
         IConfiguration configuration,
-        string sectionKey)
+        string configurationSectionKey)
+        where TCallbackHandler : class, IBankOfGeorgiaAggregatorCallbackHandler
     {
         services
+            .AddScoped<IBankOfGeorgiaAggregatorCallbackHandler, TCallbackHandler>();
+
+        services
             .AddOptions<BankOfGeorgiaAggregatorEcommerceClientOptions>()
-            .Bind(configuration.GetSection(sectionKey))
+            .Bind(configuration.GetSection(configurationSectionKey))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
         services
-            .AddSingleton<IBankOfGeorgiaApiSerializationService, BankOfGeorgiaApiSerializationService>();
+            .AddSingleton<IBankOfGeorgiaApiSerializationService, BankOfGeorgiaApiSerializationService>()
+            .AddSingleton<ICallbackRequestVerificationService, CallbackRequestVerificationService>();
 
         services
             .AddScoped<IBankOfGeorgiaAggregatorEcommerceClient, BankOfGeorgiaAggregatorEcommerceClient>()

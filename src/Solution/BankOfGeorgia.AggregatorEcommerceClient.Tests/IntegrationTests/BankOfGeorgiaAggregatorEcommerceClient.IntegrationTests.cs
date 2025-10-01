@@ -37,7 +37,7 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
 
         GetOrderDetailsRequest request = new()
         {
-            OrderId = orderResponse.Id!
+            OrderId = "6851fa67-e56b-40a8-a45f-6e6365a3b5da"
         };
 
         // Act
@@ -70,8 +70,7 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
 
         SaveCardForRecurringPaymentsRequest request = new()
         {
-            OrderId = orderResponse.Id!,
-            IdempotencyKey = Guid.NewGuid()
+            OrderId = orderResponse.Id!
         };
 
         // Act
@@ -93,8 +92,7 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
 
         SaveCardForAutomaticPaymentsRequest request = new()
         {
-            OrderId = orderResponse.Id!,
-            IdempotencyKey = Guid.NewGuid()
+            OrderId = orderResponse.Id!
         };
 
         // Act
@@ -159,22 +157,22 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
     {
         SubmitOrderRequest request = new()
         {
-            CallbackUrl = "https://localhost/callback",
+            CallbackUrl = EcommerceWebAppExampleCallbackUrl,
             RedirectUrls = new RedirectUrls()
             {
-                Success = "https://localhost/success",
-                Fail = "https://localhost/fail"
+                Success = EcommerceWebAppExampleSuccessUrl,
+                Fail = EcommerceWebAppExampleFailUrl
             },
             PurchaseUnits = new PurchaseUnits()
             {
-                TotalAmount = 5.30m,
+                TotalAmount = 5.31m,
                 Basket =
                 [
                     new BasketItem()
                     {
                         ProductId = "1",
                         Quantity = 1,
-                        UnitPrice = 1.22m,
+                        UnitPrice = 1.23m,
                     },
                     new BasketItem()
                     {
