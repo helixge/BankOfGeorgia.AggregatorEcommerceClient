@@ -6,8 +6,8 @@ namespace BankOfGeorgia.AggregatorEcommerceClient.Tests;
 public class IntegrationTestBase : IDisposable
 {
     public const string EcommerceWebAppExampleCallbackUrl = "https://localhost:4443/api/bog/callback";
-    public const string EcommerceWebAppExampleSuccessUrl = "https://localhost:4443/return/bog/success";
-    public const string EcommerceWebAppExampleFailUrl = "https://localhost:4443/return/bog/fail";
+    public const string EcommerceWebAppExampleSuccessUrl = "https://localhost:4443/return/bog/success?orderid=43";
+    public const string EcommerceWebAppExampleFailUrl = "https://localhost:4443/return/bog/fail?orderid=175";
 
     protected IHost App { get; init; }
 

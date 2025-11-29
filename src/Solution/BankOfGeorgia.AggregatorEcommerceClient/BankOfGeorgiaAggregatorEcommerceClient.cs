@@ -5,7 +5,7 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 
 public interface IBankOfGeorgiaAggregatorEcommerceClient
 {
-    Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request);
+    Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request, string? parentOrderId = default);
     Task<GetOrderDetailsResponse> GetOrderDetails(GetOrderDetailsRequest request);
     Task<SaveCardForRecurringPaymentsResponse> SaveCardForRecurringPayments(SaveCardForRecurringPaymentsRequest request);
     Task<SaveCardForAutomaticPaymentsResponse> SaveCardForAutomaticPayments(SaveCardForAutomaticPaymentsRequest request);
@@ -19,9 +19,12 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
     HttpClient httpClient
 ) : IBankOfGeorgiaAggregatorEcommerceClient
 {
-    public async Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request)
+    public async Task<SubmitOrderResponse> SubmitOrder(SubmitOrderRequest request, string? parentOrderId = default)
     {
-        string url = "v1/ecommerce/orders";
+        string urlSuffix = parentOrderId is not null
+            ? $"/{parentOrderId}"
+            : string.Empty;
+        string url = $"v1/ecommerce/orders{urlSuffix}";
         HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Post, url);
 
         if (request.IdempotencyKey is not null)

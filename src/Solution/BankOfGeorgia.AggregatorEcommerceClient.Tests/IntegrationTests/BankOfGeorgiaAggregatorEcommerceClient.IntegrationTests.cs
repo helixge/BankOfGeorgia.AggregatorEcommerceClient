@@ -26,6 +26,26 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task SubmitOrderWithParentOrderId_ValidRequest_Succeeds()
+    {
+        // Arrange
+        using IServiceScope scope = App.Services.CreateScope();
+        var client = scope.ServiceProvider.GetRequiredService<IBankOfGeorgiaAggregatorEcommerceClient>();
+
+        SubmitOrderRequest request = CreateValidSubmitOrderRequest();
+
+        // Act
+        SubmitOrderResponse response = await client.SubmitOrder(request, "6dc9dba8-bdcd-4dbe-8f59-1b429f1a1707");
+
+        // Assert
+        Assert.Multiple(
+            () => Assert.True(!string.IsNullOrWhiteSpace(response.Id)),
+            () => Assert.True(!string.IsNullOrWhiteSpace(response.DetailLink)),
+            () => Assert.True(!string.IsNullOrWhiteSpace(response.RedirectLink))
+        );
+    }
+
+    [Fact]
     public async Task GetOrderDetails_ValidRequest_Succeeds()
     {
         // Arrange
@@ -37,7 +57,7 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
 
         GetOrderDetailsRequest request = new()
         {
-            OrderId = "6851fa67-e56b-40a8-a45f-6e6365a3b5da"
+            OrderId = "efa0fa1b-6946-4c2b-852f-417cbea53ad1"
         };
 
         // Act
@@ -165,25 +185,25 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
             },
             PurchaseUnits = new PurchaseUnits()
             {
-                TotalAmount = 5.31m,
+                TotalAmount = 1.28m,
                 Basket =
                 [
                     new BasketItem()
                     {
                         ProductId = "1",
                         Quantity = 1,
-                        UnitPrice = 1.23m,
+                        UnitPrice = 0.20m,
                     },
                     new BasketItem()
                     {
                         ProductId = "1",
                         Quantity = 2,
-                        UnitPrice = 1.04m,
+                        UnitPrice = 0.04m,
                     }
                 ],
                 Delivery = new Delivery()
                 {
-                    Amount = 2.00m,
+                    Amount = 1.00m,
                 }
             },
             PaymentMethod =
