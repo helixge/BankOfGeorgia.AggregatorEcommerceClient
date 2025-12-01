@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System.Text;
@@ -10,8 +11,7 @@ public class BankOfGeorgiaCallbackMiddleware(
     ILogger<BankOfGeorgiaCallbackMiddleware> logger,
     ICallbackRequestVerificationService verifier,
     IBankOfGeorgiaApiSerializationService serializer,
-    string callbackPath,
-    IBankOfGeorgiaAggregatorCallbackHandler callbackHandler)
+    string callbackPath)
 {
     private readonly string _callbackPath = ValidateAndNormalizePath(callbackPath);
 
@@ -159,6 +159,7 @@ public class BankOfGeorgiaCallbackMiddleware(
 
         CallbackRequest request = DeserializeBody(body);
 
+        var callbackHandler = context.RequestServices.GetRequiredService<IBankOfGeorgiaAggregatorCallbackHandler>();
         await callbackHandler.Handle(request);
     }
 }
