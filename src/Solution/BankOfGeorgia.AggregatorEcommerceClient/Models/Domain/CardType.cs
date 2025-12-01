@@ -13,6 +13,6 @@ public enum CardType
     [JsonPropertyName("mc")]
     MasterCard,
 
-    [JsonPropertyName("solo")]
-    Solo
+    [JsonPropertyName("amex")]
+    AmericanExpress
 }
