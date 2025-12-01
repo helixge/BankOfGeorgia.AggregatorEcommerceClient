@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace BankOfGeorgia.AggregatorEcommerceClient.Tests;
 
@@ -173,7 +174,60 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
         );
     }
 
-    private SubmitOrderRequest CreateValidSubmitOrderRequest()
+    [Fact]
+    public async Task TestRecurringFlow()
+    {
+        using IServiceScope scope = App.Services.CreateScope();
+        var client = scope.ServiceProvider.GetRequiredService<IBankOfGeorgiaAggregatorEcommerceClient>();
+
+        SubmitOrderRequest order1SubmitRequest = CreateValidSubmitOrderRequest();
+        SubmitOrderResponse order1SubmitResponse = await client.SubmitOrder(order1SubmitRequest);
+
+        GetOrderDetailsRequest order1DetailsRequest = new()
+        {
+            OrderId = order1SubmitResponse.Id!
+        };
+        GetOrderDetailsResponse order1DetailsResponse = await client.GetOrderDetails(order1DetailsRequest);
+
+
+        SaveCardForRecurringPaymentsRequest saveCardRequest = new()
+        {
+            OrderId = order1SubmitResponse.Id!
+        };
+        SaveCardForRecurringPaymentsResponse saveCardResponse = await client.SaveCardForRecurringPayments(saveCardRequest);
+
+        Process.Start(new ProcessStartInfo(order1SubmitResponse.RedirectLink!)
+        {
+            UseShellExecute = true
+        });
+
+        while (true)
+        {
+            await Task.Delay(2000);
+
+            GetOrderDetailsRequest order1LoopDetailsRequest = new()
+            {
+                OrderId = order1SubmitResponse.Id!
+            };
+            GetOrderDetailsResponse order1LoopDetailsResponse = await client.GetOrderDetails(order1LoopDetailsRequest);
+
+            if (order1LoopDetailsResponse.OrderStatus!.Key == OrderStatusType.Completed)
+            {
+                break;
+            }
+        }
+
+        SubmitOrderRequest order2SubmitRequest = CreateValidSubmitOrderRequest(deliveryAmount: 2.00m);
+        SubmitOrderResponse order2SubmitResponse = await client.SubmitOrder(order2SubmitRequest, order1SubmitResponse.Id!);
+
+        GetOrderDetailsRequest order2DetailsRequest = new()
+        {
+            OrderId = order2SubmitResponse.Id!
+        };
+        GetOrderDetailsResponse order2DetailsResponse = await client.GetOrderDetails(order2DetailsRequest);
+    }
+
+    private SubmitOrderRequest CreateValidSubmitOrderRequest(decimal deliveryAmount = 1.00m)
     {
         SubmitOrderRequest request = new()
         {
@@ -203,7 +257,7 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
                 ],
                 Delivery = new Delivery()
                 {
-                    Amount = 1.00m,
+                    Amount = deliveryAmount,
                 }
             },
             PaymentMethod =
