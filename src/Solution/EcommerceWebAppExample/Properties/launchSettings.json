@@ -6,7 +6,10 @@
       "launchBrowser": true,
       "launchUrl": "",
       "dotnetRunMessages": true,
-      "applicationUrl": "http://+:4444;https://+:4443"
+      "applicationUrl": "http://+:4444;https://+:4443",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }
