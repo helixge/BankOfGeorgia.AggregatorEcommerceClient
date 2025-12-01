@@ -8,7 +8,7 @@ public class SubmitOrderAggregatorResponse
     public string? Id { get; set; }
 
     [JsonPropertyName("_links")]
-    public ApiResponseLinks Links { get; set; } = new();
+    public PaymentOrderLinks Links { get; set; } = new();
 
     internal SubmitOrderResponse ToSubmitOrderResponse()
         => new()

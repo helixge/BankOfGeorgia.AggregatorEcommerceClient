@@ -2,11 +2,8 @@
 
 namespace BankOfGeorgia.AggregatorEcommerceClient;
 
-public class ApiResponseLinks
+public class AutomaticPaymentOrderLinks
 {
     [JsonPropertyName("details")]
     public ApiLinkDetails? Details { get; set; }
-
-    [JsonPropertyName("redirect")]
-    public ApiLinkDetails? Redirect { get; set; }
 }

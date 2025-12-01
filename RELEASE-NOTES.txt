@@ -1,2 +1,6 @@
 v1.0.0
+    - Implement recurring and automatic subscription operations
+
+v0.0.1
     - Hello, world!
+    - Implement basic operations.

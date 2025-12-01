@@ -28,7 +28,7 @@ public class SubmitOrderRequest
 
     public CaptureType? Capture { get; init; }
 
-    public SubmitOrderAggregatorRequest ToSubmitOrderRequest() =>
+    public SubmitOrderAggregatorRequest ToSubmitOrderAggregatorRequest() =>
         new()
         {
             ApplicationType = ApplicationType,

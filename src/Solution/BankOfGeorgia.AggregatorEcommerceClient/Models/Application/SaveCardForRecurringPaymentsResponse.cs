@@ -2,5 +2,5 @@ namespace BankOfGeorgia.AggregatorEcommerceClient;
 
 public class SaveCardForRecurringPaymentsResponse
 {
-    public bool Success { get; init; }
+    public required bool Success { get; init; }
 }

@@ -5,7 +5,8 @@
 [Helix.BankOfGeorgia.AggregatorEcommerceClient](https://www.nuget.org/packages/Helix.BankOfGeorgia.AggregatorEcommerceClient) is a .NET client library for using the Bank of Georgia e-commerce payments gateway.
 
 ## How To Use
-See [ASP.NET Core integration guide](#integrating-with-aspnet-core) below
+
+> See [ASP.NET Core integration guide](#integrating-with-aspnet-core) below ⬇️
 
 ### Define Options
 
@@ -29,23 +30,44 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
 
 ### Core Payment Operations
 
-* **SubmitOrder**
+* **SubmitOrder** \
   Submit a new payment order to Bank of Georgia for processing. Returns order details, including a redirect URL where the customer should be directed to complete the payment.
+
   ```csharp
   var response = await client.SubmitOrder(new SubmitOrderRequest
   {
-      ExternalOrderId = "your-order-id",
-      PurchaseUnits = purchaseUnits,
-      RedirectUrls = redirectUrls,
-      // Optional parameters
-      IdempotencyKey = "unique-key",
-      Language = UiLanguage.EN,
-      Theme = UiTheme.Light
+    ExternalOrderId = "254",
+    CallbackUrl = "https://mywebsite.ge/payments/bog/callback",
+    RedirectUrls = new RedirectUrls()
+    {
+        Success = "https://mywebsite.ge/payments/bog/success?id=254",
+        Fail = "https://mywebsite.ge/payments/bog/fail?id=254"
+    },
+    PaymentMethod = [PaymentMethod.Card],
+    PurchaseUnits = new PurchaseUnits()
+    {
+        TotalAmount = 12.60m,
+        Basket =
+        [
+            new BasketItem()
+            {
+                ProductId = "1",
+                Quantity = 1,
+                UnitPrice = 5.00m,
+            },
+        ],
+        Delivery = new Delivery()
+        {
+            Amount = 2.60m,
+        }
+    },
+    
+    // Other options propeties
   });
-  // Redirect customer to: response.Links.Redirect.Href
   ```
+  Response contains a `Links.Redirect.Href` property containing a URL where the user must be redirected to complete the payment.
 
-* **GetOrderDetails**
+* **GetOrderDetails** \
   Retrieve detailed information about a previously submitted order, including its current status and payment details.
   ```csharp
   var details = await client.GetOrderDetails(new GetOrderDetailsRequest
@@ -54,7 +76,7 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   });
   ```
 
-* **RefundOrder**
+* **RefundOrder** \
   Process a full or partial refund for a completed order. The refund process may take several bank days to complete.
   ```csharp
   var refund = await client.RefundOrder(new RefundOrderRequest
@@ -64,10 +86,23 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   });
   ```
 
-### Card Management Operations
+### Recurring Payments
 
-* **SaveCardForRecurringPayments**
-  Mark an order to save the customer's card information for future recurring payments. This must be enabled by Bank of Georgia for your merchant account.
+Recurring payments are not enabld by default but you can request this functionality from the Bank by contacting the directly.
+
+The bank provides two ways to manage recurring payments:
+1. **Recurring Payments** \
+   The bank saves the card information based on a specific `order_id` and allows you to use that order as a parent order for future payments. You are allowed to change the amount for future payments. Customers may need to manually intervene for 3DS authorization where they must be redirected after the `SubmitOrder` operation execution.
+       
+2. **Automatic Subscription Payments**
+   The bank saves the card information based on a specific `order_id` and allows you to use that order as a parent order for future payments. You are not allowed to change the amount for future payments and there is no user intervension required in the future.
+
+### Card Management Operations
+* **SaveCardForRecurringPayments** \
+  You must call this method right after calling `SubmitOrder`, before you navigate the user to the payment page to tell the bank you want to save user's card for future payments.
+  
+  You will be able to use the supplied `bank-order-id` paramter as a `parentOrderId` when calling `SubmitOrder` to make future payments using the card information previously saved by the bank.
+
   ```csharp
   var result = await client.SaveCardForRecurringPayments(new SaveCardForRecurringPaymentsRequest
   {
@@ -75,8 +110,11 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   });
   ```
 
-* **SaveCardForAutomaticPayments**
-  Mark an order to save the customer's card for automatic/subscription payments. This must be enabled by the Bank of Georgia for your merchant account.
+* **SaveCardForAutomaticPayments** \
+  You must call this method right after calling `SubmitOrder`, before you navigate the user to the payment page to tell the bank you want to save user's card for future payments.
+
+  You will be able to use the supplied `bank-order-id` paramter as a `ParentOrderId` property when calling `SubmitSubscriptionPaymentOrder` method.
+
   ```csharp
   var result = await client.SaveCardForAutomaticPayments(new SaveCardForAutomaticPaymentsRequest
   {
@@ -84,12 +122,23 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
   });
   ```
 
-* **DeleteSavedCard**
+* **DeleteSavedCard** \
   Remove a previously saved card from the system.
+
   ```csharp
   var result = await client.DeleteSavedCard(new DeleteSavedCardRequest
   {
       OrderId = "bank-order-id"
+  });
+  ```
+
+* **SubmitSubscriptionPaymentOrder** \
+  Make automatic subscriptino payment using the card informatino saved as part of `SubmitOrder` and `SaveCardForAutomaticPayments` operations.
+
+  ```csharp
+  var result = await client.SubmitSubscriptionPaymentOrder(new SubmitSubscriptionPaymentOrderRequest
+  {
+      ParentOrderId = "bank-order-id"
   });
   ```
 

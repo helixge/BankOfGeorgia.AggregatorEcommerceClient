@@ -42,7 +42,7 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
             requestMessage.Headers.Add("Theme", serializer.Serialize(request.Theme));
         }
 
-        SubmitOrderAggregatorRequest aggregatorRequest = request.ToSubmitOrderRequest();
+        SubmitOrderAggregatorRequest aggregatorRequest = request.ToSubmitOrderAggregatorRequest();
         string serializedContent = serializer.Serialize(aggregatorRequest);
         StringContent requestContent = new(serializedContent, Encoding.UTF8, "application/json");
         requestMessage.Content = requestContent;
@@ -85,7 +85,10 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
         }
 
         await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(SaveCardForRecurringPayments));
-        return new SaveCardForRecurringPaymentsResponse { Success = true };
+        return new SaveCardForRecurringPaymentsResponse
+        {
+            Success = true
+        };
     }
 
     public async Task<SaveCardForAutomaticPaymentsResponse> SaveCardForAutomaticPayments(SaveCardForAutomaticPaymentsRequest request)
@@ -99,7 +102,36 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
         }
 
         await httpClient.MakeBankOfGeorgiaRequestExpectingAccepted(requestMessage, nameof(SaveCardForAutomaticPayments));
-        return new SaveCardForAutomaticPaymentsResponse { Success = true };
+        return new SaveCardForAutomaticPaymentsResponse
+        {
+            Success = true
+        };
+    }
+
+    public async Task<SubmitSubscriptionPaymentOrderResponse> SubmitSubscriptionPaymentOrder(SubmitSubscriptionPaymentOrderRequest request)
+    {
+        string url = $"v1/ecommerce/orders/{request.ParentOrderId}/subscribe";
+        HttpRequestMessage requestMessage = await CreateAuthenticatedRequestMessage(HttpMethod.Post, url);
+
+        if (request.IdempotencyKey is not null)
+        {
+            requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
+        }
+
+        SubmitSubscriptionPaymentOrderAggregatorRequest aggregatorRequest = request.ToSubmitSubscriptionPaymentOrderAggregatorRequest();
+        string serializedContent = serializer.Serialize(aggregatorRequest);
+        StringContent requestContent = new(serializedContent, Encoding.UTF8, "application/json");
+        requestMessage.Content = requestContent;
+
+        var aggregatorResponse = await httpClient.MakeBankOfGeorgiaRequest<SubmitSubscriptionPaymentOrderAggregatorResponse>(requestMessage, serializer);
+        SubmitSubscriptionPaymentOrderResponse response = aggregatorResponse.ToSubmitSubscriptionPaymentOrderResponse();
+
+        if (string.IsNullOrWhiteSpace(response.Id))
+        {
+            throw new BankOfGeorgiaApiException($"{nameof(SubmitOrder)} resulted in an empty {nameof(response.Id)}", aggregatorResponse);
+        }
+
+        return response;
     }
 
     public async Task<DeleteSavedCardResponse> DeleteSavedCard(DeleteSavedCardRequest request)
