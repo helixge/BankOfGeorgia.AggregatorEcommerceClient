@@ -62,7 +62,7 @@ var clientOptions = new BankOfGeorgiaAggregatorEcommerceClientOptions()
         }
     },
     
-    // Other options propeties
+    // Other optional propeties
   });
   ```
   Response contains a `Links.Redirect.Href` property containing a URL where the user must be redirected to complete the payment.

@@ -78,7 +78,7 @@ app.MapPost("/pay",
                 ]
             },
 
-            // Other options propeties
+            // Other optional propeties
         };
         SubmitOrderResponse response = await bog.SubmitOrder(request);
         return Results.Redirect(response.RedirectLink, permanent: false);
