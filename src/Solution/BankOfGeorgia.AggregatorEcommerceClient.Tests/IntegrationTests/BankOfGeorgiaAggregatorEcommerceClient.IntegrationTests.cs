@@ -239,20 +239,20 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
             },
             PurchaseUnits = new PurchaseUnits()
             {
-                TotalAmount = 1.28m,
+                TotalAmount = deliveryAmount + (1 * 0.30m) + (2 * 0.07m),
                 Basket =
                 [
                     new BasketItem()
                     {
                         ProductId = "1",
                         Quantity = 1,
-                        UnitPrice = 0.20m,
+                        UnitPrice = 0.30m,
                     },
                     new BasketItem()
                     {
                         ProductId = "1",
                         Quantity = 2,
-                        UnitPrice = 0.04m,
+                        UnitPrice = 0.07m,
                     }
                 ],
                 Delivery = new Delivery()
