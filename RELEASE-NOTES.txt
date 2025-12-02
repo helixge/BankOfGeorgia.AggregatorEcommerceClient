@@ -1,3 +1,8 @@
+v1.0.1
+    - Update CardType enum
+    - Update EcommerceWebAppExample
+    - Fix callback middleware processing
+
 v1.0.0
     - Implement recurring and automatic subscription operations
 
