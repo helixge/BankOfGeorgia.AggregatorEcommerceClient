@@ -264,7 +264,10 @@ public class BankOfGeorgiaAggregatorEcommerceClientTests : IntegrationTestBase
             [
                  PaymentMethod.Card
             ],
-            ExternalOrderId = Guid.NewGuid().ToString()
+            ExternalOrderId = Guid.NewGuid().ToString(),
+            IdempotencyKey = Guid.NewGuid(),
+            Language = UiLanguage.Georgian,
+            Theme = UiTheme.Dark
         };
 
         return request;

@@ -29,17 +29,17 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
 
         if (request.IdempotencyKey is not null)
         {
-            requestMessage.Headers.Add("Idempotency-Key", serializer.Serialize(request.IdempotencyKey));
+            requestMessage.Headers.Add("Idempotency-Key", SerializeHaaderScalarValue(request.IdempotencyKey));
         }
 
         if (request.Language is not null)
         {
-            requestMessage.Headers.Add("Accept-Language", serializer.Serialize(request.Language));
+            requestMessage.Headers.Add("Accept-Language", SerializeHaaderScalarValue(request.Language));
         }
 
         if (request.Theme is not null)
         {
-            requestMessage.Headers.Add("Theme", serializer.Serialize(request.Theme));
+            requestMessage.Headers.Add("Theme", SerializeHaaderScalarValue(request.Theme));
         }
 
         SubmitOrderAggregatorRequest aggregatorRequest = request.ToSubmitOrderAggregatorRequest();
@@ -176,5 +176,17 @@ internal class BankOfGeorgiaAggregatorEcommerceClient(
         AuthenticationHeaderValue authHeader = new("Bearer", token.AccessToken);
         requestMessage.Headers.Authorization = authHeader;
         return requestMessage;
+    }
+
+    private string SerializeHaaderScalarValue(object value)
+    {
+        if (value is Guid guidValue)
+        {
+            return guidValue.ToString();
+        }
+
+        string serialized = serializer.Serialize(value);
+        string cleanValue = serialized.Trim(['"']);
+        return cleanValue;
     }
 }
