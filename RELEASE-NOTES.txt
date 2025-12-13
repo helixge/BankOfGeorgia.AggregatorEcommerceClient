@@ -1,3 +1,6 @@
+v1.0.2
+    - Fix language, idempotency and theme parameters
+
 v1.0.1
     - Update CardType enum
     - Update EcommerceWebAppExample
